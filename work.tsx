@@ -1,139 +1,106 @@
-// components/SolidFlowAnimatedFlow.tsx
-'use client';
+.container {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  overflow: hidden;
+}
 
-import { useEffect, useRef } from 'react';
-import styles from './SolidFlowAnimatedFlow.module.css';
+.diagram {
+  width: 100%;
+  height: auto;
+}
 
-const SolidFlowAnimatedFlow = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
+.node {
+  fill: #f3f4f6;
+  stroke: #d1d5db;
+  stroke-width: 2;
+  transition: all 0.6s ease;
+}
 
-  useEffect(() => {
-    // Optional: Pause animation on scroll out of view (performance)
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add(styles.animate);
-        } else {
-          entry.target.classList.remove(styles.animate);
-        }
-      },
-      { threshold: 0.3 }
-    );
+.nodeText {
+  font-size: 14px;
+  font-weight: 600;
+  text-anchor: middle;
+  fill: #1f2937;
+}
 
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
+.state1 { fill: #e5e7eb; }
+.state2 { fill: #dbeafe; }
+.statePending { fill: #fef3c7; } /* yellow */
+.stateYellow { fill: #fef08a; }
+.stateWebhook { fill: #d1fae5; }
+.stateInternal { fill: #a7f3d0; }
+.stateGreen { fill: #bbf7d0; } /* confirmed green */
+.stateNeutral { fill: #f3f4f6; }
 
-    return () => observer.disconnect();
-  }, []);
+.solidflowPoint {
+  fill: #3b82f6;
+  opacity: 0;
+  animation: pulse 2s infinite;
+}
 
-  return (
-    <div ref={containerRef} className={styles.container}>
-      <svg
-        className={styles.diagram}
-        viewBox="0 0 1200 800"
-        preserveAspectRatio="xMidYMid meet"
-      >
-        {/* Nodes (States) */}
-        <g className={styles.nodeGroup}>
-          {/* 1. Initiated */}
-          <rect x="100" y="100" width="180" height="80" rx="12" className={`${styles.node} ${styles.state1}`} />
-          <text x="190" y="140" className={styles.nodeText}>Payment Initiated</text>
+.solidflowText {
+  font-size: 12px;
+  fill: white;
+  text-anchor: middle;
+}
 
-          {/* 2. Authorized */}
-          <rect x="350" y="100" width="180" height="80" rx="12" className={`${styles.node} ${styles.state2}`} />
-          <text x="440" y="140" className={styles.nodeText}>Authorized</text>
+.arrow {
+  fill: none;
+  stroke: #9ca3af;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
 
-          {/* 3. Pending */}
-          <rect x="600" y="100" width="180" height="80" rx="12" className={`${styles.node} ${styles.statePending}`} />
-          <text x="690" y="140" className={styles.nodeText}>Pending / Processing</text>
+.flow {
+  stroke-dasharray: 12 8;
+  stroke-dashoffset: 20;
+  animation: flow 4s linear infinite paused;
+}
 
-          {/* 4. Provider Response */}
-          <rect x="850" y="100" width="180" height="80" rx="12" className={`${styles.node} ${styles.stateYellow}`} />
-          <text x="940" y="140" className={styles.nodeText}>Provider Response</text>
+.failureFlow {
+  stroke: #ef4444;
+  stroke-dasharray: 10 5;
+  animation: flow 5s linear infinite paused;
+}
 
-          {/* 5. Webhook (Source of Truth) */}
-          <rect x="600" y="250" width="180" height="80" rx="12" className={`${styles.node} ${styles.stateWebhook}`} />
-          <text x="690" y="290" className={styles.nodeText}>Webhook Received</text>
+.failureText {
+  font-size: 13px;
+  fill: #ef4444;
+  opacity: 0;
+}
 
-          {/* 6. Internal Update */}
-          <rect x="600" y="380" width="180" height="80" rx="12" className={`${styles.node} ${styles.stateInternal}`} />
-          <text x="690" y="420" className={styles.nodeText}>Internal Update</text>
+.animate .flow,
+.animate .failureFlow {
+  animation-play-state: running;
+}
 
-          {/* 7. Fulfillment */}
-          <rect x="600" y="510" width="180" height="80" rx="12" className={`${styles.node} ${styles.stateGreen}`} />
-          <text x="690" y="550" className={styles.nodeText}>Fulfillment</text>
+@keyframes flow {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
 
-          {/* 8. Post-Monitoring */}
-          <rect x="600" y="640" width="180" height="80" rx="12" className={`${styles.node} ${styles.stateNeutral}`} />
-          <text x="690" y="680" className={styles.nodeText}>Post-Monitoring</text>
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
 
-          {/* SolidFlow Intervention Points (blue highlights) */}
-          <circle cx="900" cy="140" r="30" className={styles.solidflowPoint} />
-          <text x="900" y="145" className={styles.solidflowText}>SolidFlow</text>
-          {/* More points can be added at other risky transitions */}
-        </g>
+.overlayText {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: white;
+  background: rgba(0,0,0,0.6);
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  pointer-events: none;
+}
 
-        {/* Arrows with flowing animation */}
-        <g className={styles.arrowGroup}>
-          <path
-            d="M280,140 H350"
-            className={`${styles.arrow} ${styles.flow}`}
-            markerEnd="url(#arrowhead)"
-          />
-          <path
-            d="M530,140 H600"
-            className={`${styles.arrow} ${styles.flow}`}
-            markerEnd="url(#arrowhead)"
-          />
-          <path
-            d="M780,140 Q850,140 850,250 Q850,300 780,300"
-            className={`${styles.arrow} ${styles.flow}`}
-            markerEnd="url(#arrowhead)"
-          />
-          <path
-            d="M690,330 V380"
-            className={`${styles.arrow} ${styles.flow}`}
-            markerEnd="url(#arrowhead)"
-          />
-          <path
-            d="M690,460 V510"
-            className={`${styles.arrow} ${styles.flow}`}
-            markerEnd="url(#arrowhead)"
-          />
-          <path
-            d="M690,590 V640"
-            className={`${styles.arrow} ${styles.flow}`}
-            markerEnd="url(#arrowhead)"
-          />
-
-          {/* Failure / Recovery loop example */}
-          <path
-            d="M780,140 Q900,50 1000,140 Q1100,230 900,300 Q780,300 780,250"
-            className={`${styles.arrow} ${styles.failureFlow}`}
-            markerEnd="url(#arrowhead-red)"
-          />
-          <text x="950" y="180" className={styles.failureText}>Failure / Recovery Loop</text>
-        </g>
-
-        {/* Arrowhead definitions */}
-        <defs>
-          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
-            <polygon points="0 0, 10 3.5, 0 7" fill="#4f46e5" />
-          </marker>
-          <marker id="arrowhead-red" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
-            <polygon points="0 0, 10 3.5, 0 7" fill="#ef4444" />
-          </marker>
-        </defs>
-      </svg>
-
-      {/* Optional overlay text */}
-      <div className={styles.overlayText}>
-        <h2>SolidFlow Owns the State Machine</h2>
-        <p>Stabilizing every transition — so you never lose money to misunderstood states.</p>
-      </div>
-    </div>
-  );
-};
-
-export default SolidFlowAnimatedFlow;
+@media (max-width: 768px) {
+  .diagram { height: 600px; }
+}
