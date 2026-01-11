@@ -1,6 +1,4 @@
-  <div className="p-6">  {/* adjust padding as needed */}
-    {success ? (
-      // ── SUCCESS STATE ───────────────────────────────
+  // ── SUCCESS STATE ───────────────────────────────
       <div className="text-center py-16">
         <div className="text-6xl mb-6">✅</div>
         <h2 className="text-2xl font-bold mb-3">
