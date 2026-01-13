@@ -1,37 +1,76 @@
-<section id="real-results" style="padding: 5rem 1.5rem; background: #000; color: #fff; text-align: left;">
-  <div style="max-width: 1100px; margin: 0 auto;">
-    <h2 style="font-size: 2.5rem; text-align: center; margin-bottom: 4rem; color: #00ff9d;">Real Results from Recent 72-Hour Audits</h2>
-    
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 2rem;">
-      
-      <!-- Block 1 -->
-      <div style="background: #111; border: 1px solid #222; border-radius: 12px; padding: 1.8rem; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
-        <h3 style="font-size: 1.4rem; margin-bottom: 1rem; color: #00ff9d;">Mid-Volume African E-Commerce (Paystack)</h3>
-        <p><strong>Problem:</strong> Intermittent duplicate charges during peaks, affecting ~4–6% of transactions.</p>
-        <p><strong>Audit & Fixes:</strong> Lacked idempotency; race conditions in state. Enforced keys + reconciliation deduplication.</p>
-        <p style="color: #00ff9d; font-weight: bold; margin-top: 1rem;">Outcome: Duplicates → 0%. Saved est. $15k–$22k/mo. Support tickets ↓70%+. Zero recurrence (6+ months).</p>
+// components/CaseStudies.tsx
+import React from 'react';
+
+const caseStudies = [
+  {
+    title: 'Mid-Volume African E-Commerce (Paystack)',
+    problem: 'Intermittent duplicate charges during peaks, affecting ~4–6% of transactions.',
+    fixes: 'Lacked idempotency; race conditions in state. Enforced keys + reconciliation deduplication.',
+    outcome: 'Duplicates → 0%. Saved est. $15k–$22k/mo. Support tickets ↓70%+. Zero recurrence (6+ months).',
+  },
+  {
+    title: 'High-Throughput Fintech (Stripe + Custom)',
+    problem: '5–9% daily reconciliation mismatches + heavy manual ops.',
+    fixes: 'Hidden webhook states + poor DLQ. Chaos-tested patches + enhanced reconciliation.',
+    outcome: '99.98%+ accuracy. Manual work ↓ drastically. Recovered est. $8k–$14k/mo.',
+  },
+  {
+    title: 'Subscription SaaS (Flutterwave + Stripe Hybrid)',
+    problem: 'Over-charges on retries in recurring billing → chargeback spikes.',
+    fixes: 'Weak backoff + no cross-provider idempotency. Unified keys + jittered retries.',
+    outcome: 'Over-charges eliminated. Renewals ↑12–15%. No duplicates (4+ months).',
+  },
+];
+
+export default function CaseStudies() {
+  return (
+    <section
+      id="real-results"
+      className="py-20 px-6 md:px-12 bg-black text-white"
+    >
+      <div className="max-w-6xl mx-auto">
+        <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 text-emerald-400">
+          Real Results from Recent 72-Hour Audits
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {caseStudies.map((study, index) => (
+            <div
+              key={index}
+              className="bg-gray-900 border border-gray-800 rounded-xl p-8 shadow-lg hover:shadow-emerald-900/30 transition-shadow duration-300"
+            >
+              <h3 className="text-xl font-semibold mb-4 text-emerald-400">
+                {study.title}
+              </h3>
+
+              <div className="space-y-4 text-gray-300">
+                <p>
+                  <span className="font-medium text-white">Problem:</span>{' '}
+                  {study.problem}
+                </p>
+                <p>
+                  <span className="font-medium text-white">Audit & Fixes:</span>{' '}
+                  {study.fixes}
+                </p>
+                <p className="font-bold text-emerald-400 pt-2">
+                  Outcome: {study.outcome}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <p className="text-center mt-12 text-lg text-gray-400">
+          These are anonymized real engagements. Facing similar issues?{' '}
+          <a
+            href="#intake-form" // ← replace with your actual intake section ID or link
+            className="text-emerald-400 underline hover:text-emerald-300 transition-colors"
+          >
+            Start your 72-hour audit
+          </a>
+          .
+        </p>
       </div>
-      
-      <!-- Block 2 -->
-      <div style="background: #111; border: 1px solid #222; border-radius: 12px; padding: 1.8rem; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
-        <h3 style="font-size: 1.4rem; margin-bottom: 1rem; color: #00ff9d;">High-Throughput Fintech (Stripe + Custom)</h3>
-        <p><strong>Problem:</strong> 5–9% daily reconciliation mismatches + heavy manual ops.</p>
-        <p><strong>Audit & Fixes:</strong> Hidden webhook states + poor DLQ. Chaos-tested patches + enhanced reconciliation.</p>
-        <p style="color: #00ff9d; font-weight: bold; margin-top: 1rem;">Outcome: 99.98%+ accuracy. Manual work ↓ drastically. Recovered est. $8k–$14k/mo.</p>
-      </div>
-      
-      <!-- Block 3 -->
-      <div style="background: #111; border: 1px solid #222; border-radius: 12px; padding: 1.8rem; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
-        <h3 style="font-size: 1.4rem; margin-bottom: 1rem; color: #00ff9d;">Subscription SaaS (Flutterwave + Stripe Hybrid)</h3>
-        <p><strong>Problem:</strong> Over-charges on retries in recurring billing → chargeback spikes.</p>
-        <p><strong>Audit & Fixes:</strong> Weak backoff + no cross-provider idempotency. Unified keys + jittered retries.</p>
-        <p style="color: #00ff9d; font-weight: bold; margin-top: 1rem;">Outcome: Over-charges eliminated. Renewals ↑12–15%. No duplicates (4+ months).</p>
-      </div>
-      
-    </div>
-    
-    <p style="text-align: center; margin-top: 3rem; font-size: 1.1rem; color: #aaa;">
-      These are anonymized real engagements. Facing similar issues? <a href="#intake" style="color: #00ff9d; text-decoration: underline;">Start your 72-hour audit</a>.
-    </p>
-  </div>
-</section>
+    </section>
+  );
+}
